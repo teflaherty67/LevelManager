@@ -1,11 +1,11 @@
 ﻿using System.Windows.Media.Imaging;
 
-namespace LevelManager.Common
+namespace LevelManager.Classes
 {
-    internal class ButtonDataClass
+    internal class clsButtonData
     {
         public PushButtonData Data { get; set; }
-        public ButtonDataClass(string name, string text, string className,
+        public clsButtonData(string name, string text, string className,
             byte[] largeImage,
             byte[] smallImage,
             string toolTip)
@@ -17,10 +17,10 @@ namespace LevelManager.Common
             Data.Image = ConvertToImageSource(smallImage);
 
             // set command availability
-            string nameSpace = this.GetType().Namespace;
+            string nameSpace = GetType().Namespace;
             Data.AvailabilityClassName = $"{nameSpace}.CommandAvailability";
         }
-        public ButtonDataClass(string name, string text, string className,
+        public clsButtonData(string name, string text, string className,
             byte[] largeImage,
             byte[] smallImage,
             byte[] largeImageDark,
@@ -44,7 +44,7 @@ namespace LevelManager.Common
             }
 
             // set command availability
-            string nameSpace = this.GetType().Namespace;
+            string nameSpace = GetType().Namespace;
             Data.AvailabilityClassName = $"{nameSpace}.CommandAvailability";
         }
         public static Assembly GetAssembly()

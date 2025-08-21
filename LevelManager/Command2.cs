@@ -1,4 +1,6 @@
-﻿namespace LevelManager
+﻿using LevelManager.Classes;
+
+namespace LevelManager
 {
     [Transaction(TransactionMode.Manual)]
     public class Command2 : IExternalCommand
@@ -21,7 +23,7 @@
             string buttonInternalName = "btnCommand2";
             string buttonTitle = "Button 2";
 
-            Common.ButtonDataClass myButtonData = new Common.ButtonDataClass(
+            clsButtonData myButtonData = new Common.ButtonDataClass(
                 buttonInternalName,
                 buttonTitle,
                 MethodBase.GetCurrentMethod().DeclaringType?.FullName,

@@ -1,4 +1,5 @@
-﻿using LevelManager.Common;
+﻿using LevelManager.Classes;
+using LevelManager.Common;
 
 namespace LevelManager
 {
@@ -84,7 +85,7 @@ namespace LevelManager
             string buttonInternalName = "btnCommand1";
             string buttonTitle = "Button 1";
 
-            Common.ButtonDataClass myButtonData = new Common.ButtonDataClass(
+            clsButtonData myButtonData = new clsButtonData(
                 buttonInternalName,
                 buttonTitle,
                 MethodBase.GetCurrentMethod().DeclaringType?.FullName,

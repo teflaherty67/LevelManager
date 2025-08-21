@@ -47,6 +47,11 @@
              IsEnabled="False"/>
         </Grid>
 
+        <!--Dynamic Panel-->
+        <StackPanel Grid.Row="1">
+            <StackPanel x:Name="sp"/>
+        </StackPanel>
+
 
         <!--Buttons Section-->
         <StackPanel Grid.Row="4"
