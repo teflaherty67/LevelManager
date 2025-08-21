@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>LevelManager - Command 1</Text>
+    <Description>Some description</Description>
+    <Assembly>LevelManager\LevelManager.dll</Assembly>
+    <FullClassName>LevelManager.cmdLevelManager</FullClassName>
+    <ClientId>f01bee19-697a-4a71-9acf-79fa311dbaed</ClientId>
+    <VendorId>com.YOUR COMPANY NAME</VendorId>
+    <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
+  <AddIn Type="Command">
+    <Text>LevelManager - Command 2</Text>
+    <Description>Some description</Description>
+    <Assembly>LevelManager\LevelManager.dll</Assembly>
+    <FullClassName>LevelManager.Command2</FullClassName>
+    <ClientId>60502e8b-1549-4c82-8df0-9c24045d065d</ClientId>
+    <VendorId>com.YOUR COMPANY NAME</VendorId>
+    <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>LevelManager</Name>
+    <Assembly>LevelManager\LevelManager.dll</Assembly>
+    <FullClassName>LevelManager.App</FullClassName>
+    <ClientId>2c042eb4-4f93-444d-9e9d-c681d48efda5</ClientId>
+    <VendorId>com.YOUR COMPANY NAME</VendorId>
+    <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
+</RevitAddIns>
