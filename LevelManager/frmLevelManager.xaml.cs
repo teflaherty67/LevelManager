@@ -177,18 +177,42 @@ namespace LevelManager
         {
             var levelAdjustements = new Dictionary<Level, double>();
 
-            foreach (var kvp in Level_TextBoxes)
+            // Check if global adjustment is being used
+            if (cbxGlobal.IsChecked == true)
             {
-                Level level = kvp.Key;
-                TextBox textBox = kvp.Value;
-
-                if (double.TryParse(textBox.Text, out double adjustment))
+                // Use global value for all levels
+                if (double.TryParse(txtGlobalAdjustment.Text, out double globalAdjustment))
                 {
-                    levelAdjustements[level] = Utils.ConvertINToFT(adjustment);
+                    foreach (var kvp in Level_TextBoxes)
+                    {
+                        levelAdjustements[kvp.Key] = Utils.ConvertINToFT(globalAdjustment);
+                    }
                 }
                 else
                 {
-                    levelAdjustements[level] = 0; // default to no adjustement for invalid input
+                    // Invalid global input - set all to 0
+                    foreach (var kvp in Level_TextBoxes)
+                    {
+                        levelAdjustements[kvp.Key] = 0;
+                    }
+                }
+            }
+            else
+            {
+                // Use individual textbox values (existing logic)
+                foreach (var kvp in Level_TextBoxes)
+                {
+                    Level level = kvp.Key;
+                    TextBox textBox = kvp.Value;
+
+                    if (double.TryParse(textBox.Text, out double adjustment))
+                    {
+                        levelAdjustements[level] = Utils.ConvertINToFT(adjustment);
+                    }
+                    else
+                    {
+                        levelAdjustements[level] = 0;
+                    }
                 }
             }
 
