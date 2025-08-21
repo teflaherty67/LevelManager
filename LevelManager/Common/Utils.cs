@@ -3,6 +3,11 @@ namespace LevelManager.Common
 {
     internal static class Utils
     {
+        internal static double ConvertINToFT(double adjustment)
+        {
+            throw new NotImplementedException();
+        }
+
         internal static RibbonPanel CreateRibbonPanel(UIControlledApplication app, string tabName, string panelName)
         {
             RibbonPanel curPanel;

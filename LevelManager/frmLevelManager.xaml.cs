@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LevelManager.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -86,11 +87,69 @@ namespace LevelManager
 
         #endregion
 
+        #region Buttons Section
+
+        private void btnOK_Click(object sender, RoutedEventArgs e)
+        {
+            LevelAdjustments = LevelAdjustmentData();
+            this.DialogResult = true;
+            this.Close();
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = false;
+            this.Close();
+        }
+
+        private void btnHelp_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // launch the help site with user's default browser
+                string helpUrl = "https://lifestyle-usa-design.atlassian.net/wiki/spaces/MFS/pages/472711169/Spec+Level+Conversion?atlOrigin=eyJpIjoiMmU4MzM3NzFmY2NlNDdiNjk1MjY2M2MyYzZkMjY2YWQiLCJwIjoiYyJ9";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = helpUrl,
+                    UseShellExecute = true
+                });
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("An error occurred while trying to display help: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        #endregion
+
 
 
 
 
         #region Helper Methods
+
+        private Dictionary<Level, double> LevelAdjustmentData()
+        {
+            var levelAdjustements = new Dictionary<Level, double>();
+
+            foreach (var kvp in Level_TextBoxes)
+            {
+                Level level = kvp.Key;
+                TextBox textBox = kvp.Value;
+
+                if (double.TryParse(textBox.Text, out double adjustment))
+                {
+                    levelAdjustements[level] = Utils.ConvertINToFT(adjustment);
+                }
+                else
+                {
+                    levelAdjustements[level] = 0; // default to no adjustement for invalid input
+                }
+            }
+
+            return levelAdjustements;
+        }
 
         /// <summary>
         /// Formats a decimal elevation value in feet to a string in feet, inches, and eighths (e.g. 9'-1 1/8").
