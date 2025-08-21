@@ -54,19 +54,163 @@ namespace LevelManager
                 return Result.Cancelled;
             }
 
-            // get user input from the form
+            // get data from the form
+            Dictionary<Level, double> levelAdjustments = curForm.LevelAdjustments;
 
             #endregion
 
             #region Level Adjustments
-
             // process level adjustments based on user input
+
+            // create & start a transaction
+            using (Transaction t = new Transaction(curDoc, "Plate Height Adjustements"))
+            {
+                // process the data from the form
+                t.Start();
+
+                // loop through the dictionary
+                foreach (var kvp in levelAdjustments)
+                {
+                    // get the key value pairs
+                    Level level = kvp.Key;
+                    double adjustment = kvp.Value;
+
+                    // only adjust if value is valid
+                    if (adjustment != 0)
+                    {
+                        // adjust the level elevation
+                        level.Elevation = level.Elevation + adjustment;
+
+                        // increment the counter
+                        countAdjusted++;
+                    }
+                }
+
+                t.Commit();
+            }
 
             #endregion
 
             #region Window Adjustments
-
             // adjust windows based on the level adjustments made
+
+            // get all the window instances in the project
+            List<FamilyInstance> allWindows = Utils.GetAllWindows(curDoc);
+
+            // create a dictionary to hold the window data
+            Dictionary<ElementId, clsWindowData> dictionaryWinData = new Dictionary<ElementId, clsWindowData>();
+
+            // loop through the windows and get the data to store
+            foreach (FamilyInstance curWindow in allWindows)
+            {
+                // store the data
+                clsWindowData curData = new clsWindowData(curWindow);
+                dictionaryWinData.Add(curWindow.Id, curData);
+            }
+
+            // check if adjust head heights is checked
+            bool adjustHeadHeights = curForm.IsAdjustWindowHeadHeightsChecked();
+
+            // check is adjust window heights is checked
+            bool adjustWindowHeights = curForm.IsAdjustWindowHeightsChecked();
+
+            // test for raising or lowering windows
+            // bool raiseWindows = (selectedSpecLevel == "Complete Home Plus");
+
+            // create counter for windows changed
+            int countWindows = 0;
+
+            // create a list for windows skipped
+            List<string> skippedWindows = new List<string>();
+
+            #region Adjust Head Heights
+
+            // execute this code if adjust head heights is checked
+            if (adjustHeadHeights)
+            {
+                // create and start a transaction
+                using (Transaction t = new Transaction(curDoc, "Adjust Window Head Heights"))
+                {
+                    t.Start();
+
+                    foreach (var kvp in dictionaryWinData)
+                    {
+                        clsWindowData curData = kvp.Value;
+                        double plateAdjustment = 1.0;
+                        double newHeadHeight;
+
+                        if (!raiseWindows)
+                        {
+                            // lower window head heights by 12"
+                            newHeadHeight = curData.CurHeadHeight - plateAdjustment;
+                        }
+                        else
+                        {
+                            // raise window head height by by 12"
+                            newHeadHeight = curData.CurHeadHeight + plateAdjustment;
+                        }
+
+                        if (curData.HeadHeightParam != null && !curData.HeadHeightParam.IsReadOnly)
+                        {
+                            // adjust the head heihgt
+                            curData.HeadHeightParam.Set(newHeadHeight);
+
+                            // increment the counter
+                            countWindows++;
+                        }
+                    }
+
+                    t.Commit();
+                }
+            }
+
+            #endregion
+
+            #region Adjust Head Height & Window Height
+
+            // execute this code if both boxes are checked
+            if (adjustHeadHeights && adjustWindowHeights)
+            {
+                // create and start a transaction
+                using (Transaction t = new Transaction(curDoc, "Adjust Window Head Heights & Window Heights"))
+                {
+                    t.Start();
+
+                    foreach (var kvp in dictionaryWinData)
+                    {
+                        clsWindowData curData = kvp.Value;
+                        double plateAdjustment = 1.0;
+                        double newHeadHeight;
+
+                        if (!raiseWindows)
+                        {
+                            // lower window head heights by 12"
+                            newHeadHeight = curData.CurHeadHeight - plateAdjustment;
+                        }
+                        else
+                        {
+                            // raise window head height by by 12"
+                            newHeadHeight = curData.CurHeadHeight + plateAdjustment;
+                        }
+
+                        if (curData.HeadHeightParam != null && !curData.HeadHeightParam.IsReadOnly)
+                        {
+                            // adjust the head heihgt
+                            curData.HeadHeightParam.Set(newHeadHeight);
+
+                            // increment the counter
+                            countWindows++;
+
+                            // adjust window heights
+                            AdjustWindowHeights(curDoc, curData, plateAdjustment, raiseWindows, skippedWindows);
+                        }
+                    }
+
+                    t.Commit();
+                }
+            }
+
+            #endregion
 
             #endregion
 
@@ -77,7 +221,7 @@ namespace LevelManager
             #endregion
 
             return Result.Succeeded;
-        }
+        
 
         internal static PushButtonData GetButtonData()
         {
