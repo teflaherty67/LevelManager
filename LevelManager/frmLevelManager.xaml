@@ -48,7 +48,7 @@
         </Grid>
 
         <!--Dynamic Panel-->
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="2">
             <StackPanel x:Name="sp"/>
         </StackPanel>
 
