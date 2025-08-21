@@ -181,7 +181,7 @@ namespace LevelManager
             if (cbxGlobal.IsChecked == true)
             {
                 // Use global value for all levels
-                if (double.TryParse(txtGlobalAdjustment.Text, out double globalAdjustment))
+                if (double.TryParse(txtGlobalAdjustment.Text.Replace("\"", ""), out double globalAdjustment))
                 {
                     foreach (var kvp in Level_TextBoxes)
                     {
@@ -205,7 +205,7 @@ namespace LevelManager
                     Level level = kvp.Key;
                     TextBox textBox = kvp.Value;
 
-                    if (double.TryParse(textBox.Text, out double adjustment))
+                    if (double.TryParse(textBox.Text.Replace("\"", ""), out double adjustment))
                     {
                         levelAdjustements[level] = Utils.ConvertINToFT(adjustment);
                     }
