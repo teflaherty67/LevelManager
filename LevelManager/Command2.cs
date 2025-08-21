@@ -23,7 +23,7 @@ namespace LevelManager
             string buttonInternalName = "btnCommand2";
             string buttonTitle = "Button 2";
 
-            clsButtonData myButtonData = new Common.ButtonDataClass(
+            clsButtonData myButtonData = new clsButtonData(
                 buttonInternalName,
                 buttonTitle,
                 MethodBase.GetCurrentMethod().DeclaringType?.FullName,

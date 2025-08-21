@@ -25,7 +25,7 @@
         <!--Instruction Row-->
         <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left">
             <Label Content="Enter plate adjustments in decimal inches:"/>
-            <Label Content="(Use + to raise, - to lower)" FontSize="10" Foreground="Gray"/>
+            <Label Content="(Use + to raise, - to lower)" FontSize="10" Foreground="Gray" Margin="0,-5,0,0" />
         </StackPanel>
 
         <!--Global Input Row as Grid-->

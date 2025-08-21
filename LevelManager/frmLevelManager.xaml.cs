@@ -45,12 +45,24 @@ namespace LevelManager
         private void cbxGlobal_Checked(object sender, RoutedEventArgs e)
         {
             txtGlobalAdjustment.IsEnabled = true;
+
+            // Disable all individual level textboxes
+            foreach (var textBox in Level_TextBoxes.Values)
+            {
+                textBox.IsEnabled = false;
+            }
         }
 
         private void cbxGlobal_Unchecked(object sender, RoutedEventArgs e)
         {
             txtGlobalAdjustment.IsEnabled = false;
             txtGlobalAdjustment.Text = ""; // Clear the value when unchecked
+
+            // Re-enable all individual level textboxes
+            foreach (var textBox in Level_TextBoxes.Values)
+            {
+                textBox.IsEnabled = true;
+            }
         }
 
         #endregion
@@ -137,10 +149,6 @@ namespace LevelManager
         }
 
         #endregion
-
-
-
-
 
         #region Helper Methods
 
