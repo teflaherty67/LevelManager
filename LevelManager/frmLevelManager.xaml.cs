@@ -40,6 +40,21 @@ namespace LevelManager
             GenerateLevelControls();
         }
 
+        #region Global Form Controls
+
+        private void cbxGlobal_Checked(object sender, RoutedEventArgs e)
+        {
+            txtGlobalAdjustment.IsEnabled = true;
+        }
+
+        private void cbxGlobal_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtGlobalAdjustment.IsEnabled = false;
+            txtGlobalAdjustment.Text = ""; // Clear the value when unchecked
+        }
+
+        #endregion
+
         #region Dynamic Controls
 
         private void GenerateLevelControls()
