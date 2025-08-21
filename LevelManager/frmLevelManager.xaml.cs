@@ -46,28 +46,40 @@ namespace LevelManager
             // loop through the levels and create a control for each level
             foreach (Level curLevel in Levels)
             {
-                // create a grid
-                Grid levelGrid = new Grid() { Margin = new Thickness(0, 2, 0, 2) }; // Add some vertical spacing
-
+                // create a grid with 3 columns
+                Grid levelGrid = new Grid() { Margin = new Thickness(0, 2, 0, 2) };
                 levelGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // level name
-                levelGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // TextBox for adjustment
+                levelGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // current elevation display
+                levelGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // adjustment input
 
-                // create & position the label
+                // create & position the level name label
                 Label lblLevel = new Label() { Content = curLevel.Name };
                 Grid.SetColumn(lblLevel, 0);
 
-                // create & postion the text box
-                TextBox txbLevel = new TextBox();
-                Grid.SetColumn(txbLevel, 1);
+                // create & position the current elevation display
+                TextBox txtCurrentElevation = new TextBox()
+                {
+                    Text = FormatElevation(curLevel.Elevation),
+                    IsReadOnly = true,
+                    Background = System.Windows.Media.Brushes.LightGray,
+                    Width = 80,
+                    Margin = new Thickness(5, 0, 5, 0)
+                };
+                Grid.SetColumn(txtCurrentElevation, 1);
+
+                // create & position the adjustment input textbox
+                TextBox txbLevel = new TextBox() { Width = 80 };
+                Grid.SetColumn(txbLevel, 2);
 
                 // store the TextBox reference
                 Level_TextBoxes[curLevel] = txbLevel;
 
-                // add both controls to the grid
+                // add all controls to the grid
                 levelGrid.Children.Add(lblLevel);
+                levelGrid.Children.Add(txtCurrentElevation);
                 levelGrid.Children.Add(txbLevel);
 
-                // grid to the stack panel
+                // add grid to the stack panel
                 sp.Children.Add(levelGrid);
             }
         }
@@ -75,5 +87,49 @@ namespace LevelManager
         #endregion
 
 
+
+
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Formats a decimal elevation value in feet to a string in feet, inches, and eighths (e.g. 9'-1 1/8").
+        /// </summary>
+        /// <param name="elevationInFeet">The elevation value in feet.</param>
+        /// <returns>A formatted string representing the elevation.</returns>
+        private string FormatElevation(double elevationInFeet)
+        {
+            // extract whole feet
+            int feet = (int)elevationInFeet;
+
+            // convert the remaining decimal to inches
+            double inches = (elevationInFeet - feet) * 12;
+            int wholeInches = (int)inches;
+            double fractionalInches = inches - wholeInches;
+
+            // convert fractional inches to nearest 1/8"
+            int eighths = (int)Math.Round(fractionalInches * 8);
+
+            // handle rounding that bumps up to the next whole inch
+            if (eighths == 8)
+            {
+                wholeInches++;
+                eighths = 0;
+            }
+
+            // return formatted string based on whether there is a fraction
+            if (eighths == 0)
+            {
+                return wholeInches == 0
+                    ? $"{feet}'-0\""
+                    : $"{feet}'-{wholeInches}\"";
+            }
+            else
+            {
+                return $"{feet}'-{wholeInches} {eighths}/8\"";
+            }
+        }
+
+        #endregion
     }
 }
