@@ -16,14 +16,30 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
+        
+        <!--Instruction Row-->
+        <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label Content="Enter plate adjustments in decimal inches:"/>
+            <Label Content="(Use + to raise, - to lower)" FontSize="10" Foreground="Gray"/>
+        </StackPanel>
+
+        <!--Global Input Row-->
+        <CheckBox Grid.Row="1" x:Name="cbxGlobal" Content="Apply same adjustment to all levels."/>
+        <TextBox Grid.Row="1" x:Name="txtGlobalAdjustment"
+                 Width="100" Height="25"
+                 Margin="10,0,0,0"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Center"
+                 IsEnabled="False"/>
 
 
         <!--Buttons Section-->
-        <StackPanel Grid.Row="3"
+        <StackPanel Grid.Row="4"
                     Grid.ColumnSpan="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
