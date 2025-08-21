@@ -37,18 +37,43 @@ namespace LevelManager
             // create a counter for summary report
             int countAdjusted = 0;
 
+            #endregion
 
+            #region Form
 
+            // launch the form with level data
+            frmLevelManager curForm = new frmLevelManager(filteredLevels);
+            curForm.Topmost = true; // ensure the form is on top
 
+            curForm.ShowDialog();
 
+            // check if user clicked Cancel
+            if (curForm.DialogResult != true)
+            {
+                return Result.Cancelled;
+            }
 
-
+            // get user input from the form
 
             #endregion
 
-            // get data for form
+            #region Level Adjustments
 
-            //
+            // process level adjustments based on user input
+
+            #endregion
+
+            #region Window Adjustments
+
+            // adjust windows based on the level adjustments made
+
+            #endregion
+
+            #region Summary Report
+
+            // display a summary report of the adjustments made
+
+            #endregion
 
             return Result.Succeeded;
         }

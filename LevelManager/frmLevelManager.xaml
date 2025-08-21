@@ -28,14 +28,24 @@
             <Label Content="(Use + to raise, - to lower)" FontSize="10" Foreground="Gray"/>
         </StackPanel>
 
-        <!--Global Input Row-->
-        <CheckBox Grid.Row="1" x:Name="cbxGlobal" Content="Apply same adjustment to all levels."/>
-        <TextBox Grid.Row="1" x:Name="txtGlobalAdjustment"
-                 Width="100" Height="25"
-                 Margin="10,0,0,0"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Center"
-                 IsEnabled="False"/>
+        <!--Global Input Row as Grid-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0" x:Name="cbxGlobal" 
+              Content="Apply same adjustment to all levels:"
+              VerticalAlignment="Center"
+              Checked="cbxGlobal_Checked"
+              Unchecked="cbxGlobal_Unchecked"/>
+            <TextBox Grid.Column="1" x:Name="txtGlobalAdjustment"
+             Width="60" Height="25"
+             Margin="10,0,0,0"
+             VerticalAlignment="Center"
+             IsEnabled="False"/>
+        </Grid>
 
 
         <!--Buttons Section-->

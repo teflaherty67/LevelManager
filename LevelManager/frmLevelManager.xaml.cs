@@ -19,7 +19,7 @@ namespace LevelManager
     /// </summary>
     public partial class frmLevelManager : Window
     {
-        public frmLevelManager()
+        public frmLevelManager(List<Level> levels)
         {
             InitializeComponent();
         }
