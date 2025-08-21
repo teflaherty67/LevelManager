@@ -15,6 +15,51 @@ namespace LevelManager.Common
 
         #endregion
 
+        #region Elements - Architectural
+
+        //return list of all doors in the current model
+        public static List<FamilyInstance> GetAllDoors(Document curDoc)
+        {
+            //get all doors
+            var returnList = new FilteredElementCollector(curDoc)
+                .OfClass(typeof(FamilyInstance))
+                .OfCategory(BuiltInCategory.OST_Doors)
+                .Cast<FamilyInstance>()
+                .ToList();
+
+            return returnList;
+        }
+
+        internal static List<FamilyInstance> GetAllDoorsInActiveView(Document curDoc)
+        {
+            // get all the doors in the current view
+            var m_returnList = new FilteredElementCollector(curDoc, curDoc.ActiveView.Id)
+                 .OfClass(typeof(FamilyInstance))
+                 .OfCategory(BuiltInCategory.OST_Doors)
+                 .Cast<FamilyInstance>()
+                 .ToList();
+
+            // return the list
+            return m_returnList;
+        }
+
+
+
+        //return list of all windows in the current model
+        public static List<FamilyInstance> GetAllWindows(Document curDoc)
+        {
+            //get all windows
+            var returnList = new FilteredElementCollector(curDoc)
+                .OfCategory(BuiltInCategory.OST_Windows)
+                .OfClass(typeof(FamilyInstance))
+                .Cast<FamilyInstance>()
+                .ToList();
+
+            return returnList;
+        }
+
+        #endregion
+
         #region Levels
 
         public static List<Level> GetAllLevels(Document curDoc)
@@ -186,7 +231,7 @@ namespace LevelManager.Common
 
             // return the list of views
             return m_Views;
-        }
+        }       
 
         #endregion
     }

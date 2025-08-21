@@ -65,6 +65,27 @@ namespace LevelManager
             }
         }
 
+        private void chkAdjustWindowHeadHeights_Checked(object sender, RoutedEventArgs e)
+        {
+            chkAdjustWindowHeights.IsEnabled = true;
+        }
+
+        private void chkAdjustWindowHeadHeights_Unchecked(object sender, RoutedEventArgs e)
+        {
+            chkAdjustWindowHeights.IsEnabled = false;
+            chkAdjustWindowHeights.IsChecked = false;
+        }
+
+        public bool IsAdjustWindowHeadHeightsChecked()
+        {
+            return chkAdjustWindowHeadHeights.IsChecked == true;
+        }
+
+        public bool IsAdjustWindowHeightsChecked()
+        {
+            return chkAdjustWindowHeights.IsChecked == true;
+        }
+
         #endregion
 
         #region Dynamic Controls
@@ -112,7 +133,7 @@ namespace LevelManager
             }
         }
 
-        #endregion
+        #endregion 
 
         #region Buttons Section
 
