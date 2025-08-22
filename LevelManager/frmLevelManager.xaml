@@ -19,7 +19,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         
@@ -42,10 +42,11 @@
               Checked="cbxGlobal_Checked"
               Unchecked="cbxGlobal_Unchecked"/>
             <TextBox Grid.Column="1" x:Name="txtGlobalAdjustment"
-             Width="60" Height="25"
-             Margin="10,0,0,0"
-             VerticalAlignment="Center"
-             IsEnabled="False"/>
+         Width="60" Height="25"
+         Margin="10,0,0,0"
+         VerticalAlignment="Center"
+         IsEnabled="False"
+         TextChanged="txtGlobalAdjustment_TextChanged"/>
         </Grid>
 
         <!--Dynamic Panel-->
@@ -66,6 +67,15 @@
                IsEnabled="False"/>
         </StackPanel>
 
+        <!--Warning Row-->
+        <StackPanel Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Label x:Name="lblWarning" 
+           Content="Level ordering conflicts detected." 
+           Foreground="Red" 
+           FontWeight="Bold"
+           FontSize="14"
+           Visibility="Collapsed"/>
+        </StackPanel>
 
         <!--Buttons Section-->
         <StackPanel Grid.Row="5"

@@ -51,6 +51,9 @@ namespace LevelManager
             {
                 textBox.IsEnabled = false;
             }
+
+            // validate and update the UI
+            ValidateAndUpdateUI();
         }
 
         private void cbxGlobal_Unchecked(object sender, RoutedEventArgs e)
@@ -63,28 +66,15 @@ namespace LevelManager
             {
                 textBox.IsEnabled = true;
             }
+
+            // validate and update the UI
+            ValidateAndUpdateUI();
         }
 
-        private void chkAdjustWindowHeadHeights_Checked(object sender, RoutedEventArgs e)
+        private void txtGlobalAdjustment_TextChanged(object sender, TextChangedEventArgs e)
         {
-            chkAdjustWindowHeights.IsEnabled = true;
-        }
-
-        private void chkAdjustWindowHeadHeights_Unchecked(object sender, RoutedEventArgs e)
-        {
-            chkAdjustWindowHeights.IsEnabled = false;
-            chkAdjustWindowHeights.IsChecked = false;
-        }
-
-        public bool IsAdjustWindowHeadHeightsChecked()
-        {
-            return chkAdjustWindowHeadHeights.IsChecked == true;
-        }
-
-        public bool IsAdjustWindowHeightsChecked()
-        {
-            return chkAdjustWindowHeights.IsChecked == true;
-        }
+            ValidateAndUpdateUI();
+        }        
 
         #endregion
 
@@ -116,8 +106,13 @@ namespace LevelManager
                 };
                 Grid.SetColumn(txtCurrentElevation, 1);
 
-                // create & position the adjustment input textbox
+                // create the adjustment input textbox
                 TextBox txbLevel = new TextBox() { Width = 80 };
+
+                // add the TextChanged event handler
+                txbLevel.TextChanged += (s, e) => ValidateAndUpdateUI();
+
+                // position the adjustment input textbox
                 Grid.SetColumn(txbLevel, 2);
 
                 // store the TextBox reference
@@ -133,7 +128,32 @@ namespace LevelManager
             }
         }
 
-        #endregion 
+        #endregion
+
+        #region Window Adjustement Controls
+
+        private void chkAdjustWindowHeadHeights_Checked(object sender, RoutedEventArgs e)
+        {
+            chkAdjustWindowHeights.IsEnabled = true;
+        }
+
+        private void chkAdjustWindowHeadHeights_Unchecked(object sender, RoutedEventArgs e)
+        {
+            chkAdjustWindowHeights.IsEnabled = false;
+            chkAdjustWindowHeights.IsChecked = false;
+        }
+
+        public bool IsAdjustWindowHeadHeightsChecked()
+        {
+            return chkAdjustWindowHeadHeights.IsChecked == true;
+        }
+
+        public bool IsAdjustWindowHeightsChecked()
+        {
+            return chkAdjustWindowHeights.IsChecked == true;
+        }
+
+        #endregion
 
         #region Buttons Section
 
@@ -219,6 +239,61 @@ namespace LevelManager
             return levelAdjustements;
         }
 
+        private bool CheckForOrderingViolations()
+        {
+            // Get the original ordering of levels by elevation
+            var originalOrder = Levels.OrderBy(l => l.Elevation).ToList();
+
+            // Use your existing method to get current adjustments
+            var adjustments = LevelAdjustmentData();
+            var projectedElevations = new List<(Level level, double newElevation)>();
+
+            foreach (var level in originalOrder)
+            {
+                double adjustment = adjustments.ContainsKey(level) ? adjustments[level] : 0;
+                double newElevation = level.Elevation + adjustment; // Note: already converted to feet
+                projectedElevations.Add((level, newElevation));
+            }
+
+            // Check if the new elevations maintain the same ordering
+            var newOrder = projectedElevations.OrderBy(x => x.newElevation).Select(x => x.level).ToList();
+
+            // Compare the orderings
+            for (int i = 0; i < originalOrder.Count; i++)
+            {
+                if (originalOrder[i].Id != newOrder[i].Id)
+                    return true; // Violation found
+            }
+
+            return false; // No violations
+        }
+
+        private void ValidateAndUpdateUI()
+        {
+            bool hasViolations = CheckForOrderingViolations();
+
+            // Update OK button
+            btnOK.IsEnabled = !hasViolations;
+
+            if (hasViolations)
+            {
+                btnOK.Background = System.Windows.Media.Brushes.Red;
+                btnOK.Foreground = System.Windows.Media.Brushes.White;
+            }
+            else
+            {
+                // Make OK button match the other buttons exactly
+                btnOK.Background = btnCancel.Background;
+                btnOK.Foreground = btnCancel.Foreground;
+                btnOK.BorderBrush = btnCancel.BorderBrush;
+            }
+
+            // Update warning label
+            lblWarning.Visibility = hasViolations ?
+                System.Windows.Visibility.Visible :
+                System.Windows.Visibility.Collapsed;
+        }
+
         /// <summary>
         /// Formats a decimal elevation value in feet to a string in feet, inches, and eighths (e.g. 9'-1 1/8").
         /// </summary>
@@ -253,8 +328,33 @@ namespace LevelManager
             }
             else
             {
-                return $"{feet}'-{wholeInches} {eighths}/8\"";
+                // Reduce the fraction to its simplest form
+                string fractionPart = GetReducedFraction(eighths, 8);
+                return $"{feet}'-{wholeInches} {fractionPart}\"";
             }
+        }
+
+        private string GetReducedFraction(int numerator, int denominator)
+        {
+            // Find the greatest common divisor
+            int gcd = GetGCD(numerator, denominator);
+
+            // Reduce the fraction
+            int reducedNum = numerator / gcd;
+            int reducedDen = denominator / gcd;
+
+            return $"{reducedNum}/{reducedDen}";
+        }
+
+        private int GetGCD(int a, int b)
+        {
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
         }
 
         #endregion
