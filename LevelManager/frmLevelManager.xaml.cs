@@ -1,4 +1,5 @@
-﻿using LevelManager.Common;
+﻿using LevelManager.Classes;
+using LevelManager.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace LevelManager
         private Dictionary<Level, TextBox> Level_TextBoxes = new Dictionary<Level, TextBox>();
 
         // create public property for Dictionary
-        public Dictionary<Level, double> LevelAdjustments { get; private set; }
+        public Dictionary<Level, double> LevelAdjustments { get; private set; }        
+
         public frmLevelManager(List<Level> levels)
         {
             // store passed data
@@ -38,6 +40,9 @@ namespace LevelManager
 
             // generate level controls
             GenerateLevelControls();
+
+            // configure window controls based on story count
+            ConfigureWindowControlsForStoryCount();
         }
 
         #region Global Form Controls
@@ -132,26 +137,34 @@ namespace LevelManager
 
         #region Window Adjustement Controls
 
-        private void chkAdjustWindowHeadHeights_Checked(object sender, RoutedEventArgs e)
+        private void chkFirstFloorHeadHeights_Checked(object sender, RoutedEventArgs e)
         {
-            chkAdjustWindowHeights.IsEnabled = true;
+            chkFirstFloorWindowHeights.IsEnabled = true;            
         }
 
-        private void chkAdjustWindowHeadHeights_Unchecked(object sender, RoutedEventArgs e)
+        private void chkFirstFloorHeadHeights_Unchecked(object sender, RoutedEventArgs e)
         {
-            chkAdjustWindowHeights.IsEnabled = false;
-            chkAdjustWindowHeights.IsChecked = false;
+            chkFirstFloorWindowHeights.IsEnabled = false;
+            chkFirstFloorWindowHeights.IsChecked = false;           
         }
 
-        public bool IsAdjustWindowHeadHeightsChecked()
+        private void chkSecondFloorHeadHeights_Checked(object sender, RoutedEventArgs e)
         {
-            return chkAdjustWindowHeadHeights.IsChecked == true;
+            chkSecondFloorWindowHeights.IsEnabled = true;            
         }
 
-        public bool IsAdjustWindowHeightsChecked()
+        private void chkSecondFloorHeadHeights_Unchecked(object sender, RoutedEventArgs e)
         {
-            return chkAdjustWindowHeights.IsChecked == true;
+            chkSecondFloorWindowHeights.IsEnabled = false;
+            chkSecondFloorWindowHeights.IsChecked = false;            
         }
+
+        public bool IsFirstFloorHeadHeightsChecked() => chkFirstFloorHeadHeights.IsChecked == true;
+        public bool IsFirstFloorWindowHeightsChecked() => chkFirstFloorWindowHeights.IsChecked == true;
+        public bool IsSecondFloorHeadHeightsChecked() => chkSecondFloorHeadHeights.IsChecked == true;
+        public bool IsSecondFloorWindowHeightsChecked() => chkSecondFloorWindowHeights.IsChecked == true;
+
+
 
         #endregion
 
@@ -290,6 +303,18 @@ namespace LevelManager
 
             // Update warning label
             lblWarning.Visibility = hasViolations ?
+                System.Windows.Visibility.Visible :
+                System.Windows.Visibility.Collapsed;
+        }
+
+        private void ConfigureWindowControlsForStoryCount()
+        {
+            bool isMultiStory = Levels.Any(level =>
+                ProjectConstants.MultiStoryIndicators.Any(indicator =>
+                    level.Name.Contains(indicator)));
+
+            // Hide second floor section if single story
+            spSecondFloorSection.Visibility = isMultiStory ?
                 System.Windows.Visibility.Visible :
                 System.Windows.Visibility.Collapsed;
         }
