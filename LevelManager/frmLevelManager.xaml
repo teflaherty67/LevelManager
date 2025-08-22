@@ -1,0 +1,72 @@
+﻿<Window x:Class="LevelManager.frmLevelManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LevelManager"
+        mc:Ignorable="d"
+ Height="Auto"
+ Width="Auto"
+ SizeToContent="WidthAndHeight" Title="Plate Height Adjustments"
+ WindowStartupLocation="CenterScreen">
+    
+    
+    
+    
+    
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Margin" Value="5,2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label Content="Enter plate adjustments in decimal inches:"/>
+            <Label Content="(Use + to raise, - to lower)" FontSize="10" Foreground="Gray"/>
+        </StackPanel>
+
+        <!--Dynamic Panel-->
+        <StackPanel Grid.Row="1">
+            <StackPanel x:Name="sp"/>
+        </StackPanel>
+
+        <!--Buttons Section-->
+        <StackPanel Grid.Row="3"
+            Grid.ColumnSpan="2"
+            Orientation="Horizontal" 
+            HorizontalAlignment="Right" 
+            VerticalAlignment="Center">
+            <Button x:Name="btnOK" 
+            Content="OK" 
+            Width="75" 
+            Height="25" 
+            Margin="0,0,10,0" 
+            IsDefault="True" 
+            Click="btnOK_Click"/>
+            <Button x:Name="btnCancel" 
+            Content="Cancel" 
+            Width="75" 
+            Height="25" 
+            Margin="0,0,10,0" 
+            IsCancel="True" 
+            Click="btnCancel_Click"/>
+            <Button x:Name="btnHelp" 
+            Content="Help" 
+            Width="75" 
+            Height="25" 
+            Click="btnHelp_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
+
