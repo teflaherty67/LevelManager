@@ -231,7 +231,24 @@ namespace LevelManager.Common
 
             // return the list of views
             return m_Views;
-        }       
+        }
+
+        internal static List<FamilyInstance> GetWindowsByLevel(Document curDoc, string levelName)
+        {
+            // get all windows
+            List<FamilyInstance> m_allWindows = Utils.GetAllWindows(curDoc);
+
+            // filter list by level name
+            List<FamilyInstance> m_windowsByLevel = m_allWindows
+                .Where(win => win.LevelId != null)
+                .Where(win => {
+                    var level = curDoc.GetElement(win.LevelId) as Level;
+                    return level != null && level.Name == levelName;
+                })
+                .ToList();
+
+            return m_windowsByLevel;
+        }
 
         #endregion
     }

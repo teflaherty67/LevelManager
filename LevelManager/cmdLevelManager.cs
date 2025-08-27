@@ -107,11 +107,75 @@ namespace LevelManager
                 bool adjustFirstFlrHeadHeights = DetermineHeadHeightAdjustment("Plate 1", levelAdjustments);
                 bool adjustSecondFlrHeadHeights = DetermineHeadHeightAdjustment("Plate 2", levelAdjustments);
 
-                // filter windows by floor
+                // get windows by floor
+                List<FamilyInstance> firstFlrWindows = Utils.GetWindowsByLevel(curDoc, "First Floor");
+                List<FamilyInstance> secondFlrWindows = Utils.GetWindowsByLevel(curDoc, "Second Floor");
+
+                // count variables
+                int firstFlrWinHeadAdjusted = 0;
+                int firstFlrWinHeightdjusted = 0;
+                int secondFlrWinHeadAdjusted = 0;
+                int secondFlrWinHeightdjusted = 0;
 
                 // process first floor windows
+                if (firstFlrHeadHeights)
+                {
+                    using (Transaction t = new Transaction(curDoc, "Adjust First Floor Winodws"))
+                    {
+                        t.Start();
+
+                        foreach (FamilyInstance curWin in firstFlrWindows)
+                        {
+                            if (curWin != null)
+                            {
+                                // create a clsWindowData object
+                                clsWindowData curWinData = new clsWindowData(curWin);
+
+                                // head height adjustment code
+
+                                // check if adjust window heights is true
+                                if (firstFlrWinHeights)
+                                {
+                                    // adjust window heihgts
+                                }
+                            }
+                        }
+
+                        // commit the transaction
+                        t.Commit();
+                    }
+
+                    // notify user of adjustments made
+                }
 
                 // process second floor windows
+                if (secondFlrHeadHeights)
+                {
+                    using (Transaction t = new Transaction(curDoc, "Adjust Second Floor Winodws"))
+                    {
+                        t.Start();
+
+                        foreach (FamilyInstance curWin in firstFlrWindows)
+                        {
+                            if (curWin != null)
+                            {
+                                // create a clsWindowData object
+                                clsWindowData curWinData = new clsWindowData(curWin);
+
+                                // head height adjustment code
+
+                                // check if adjust window heights is true
+                                if (secondFlrWinHeights)
+                                {
+                                    // adjust window heihgts
+                                }
+                            }
+                        }
+
+                        // commit the transaction
+                        t.Commit();
+                    }
+                }
 
                 // tracking & summary report
             }
@@ -153,69 +217,7 @@ namespace LevelManager
             return false;
         }
 
-        //private void AdjustWindowHeights(Document curDoc, clsWindowData curData, double plateAdjustment, object raiseWindows, List<string> skippedWindows)
-        //{
-        //    // get the current family
-        //    Family curFam = curData.WindowInstance.Symbol.Family;
-
-        //    // get the current window instance type name
-        //    string curTypeName = curData.WindowInstance.Symbol.Name;
-
-        //    // split the Type Name into parts
-        //    string[] stringParts = curTypeName.Split(' ');
-        //    string sizePart = stringParts[0];
-
-        //    // store the width & mull indicator if present
-        //    string wndwPrefix = sizePart.Substring(0, sizePart.Length - 2);
-
-        //    // get the current window height
-        //    string wndwHeight = sizePart.Substring(sizePart.Length - 2);
-
-        //    // change the string to an interger
-        //    int curHeight = int.Parse(wndwHeight);
-
-        //    // create variable for new height
-        //    string newHeightPart;
-
-        //    if (raiseWindows)
-        //    {
-        //        // set the new height number
-        //        int newHeight = curHeight + 10;
-
-        //        // convert to a string
-        //        newHeightPart = newHeight.ToString();
-        //    }
-        //    else
-        //    {
-        //        // set the new height number
-        //        int newHeight = curHeight - 10;
-
-        //        // convert to a string
-        //        newHeightPart = newHeight.ToString();
-        //    }
-
-        //    // set the new type name
-        //    string newTypeName = wndwPrefix + newHeightPart + " " + string.Join(" ", stringParts.Skip(1));
-
-        //    // get all the tpyes from the family
-        //    foreach (ElementId curTypeId in curFam.GetFamilySymbolIds())
-        //    {
-        //        // find the correct type
-        //        FamilySymbol curFamType = curDoc.GetElement(curTypeId) as FamilySymbol;
-        //        string typeName = curFamType.Name;
-
-        //        // compare type names
-        //        if (typeName == newTypeName)
-        //        {
-        //            // if match found, change the type
-        //            curData.WindowInstance.ChangeTypeId(curFamType.Id);
-        //        }
-        //        else
-        //        {
-        //            // if not found, add to list of skipped windows
-        //        }
-        //    }
-        //}
+       
 
         internal static PushButtonData GetButtonData()
         {
@@ -237,117 +239,3 @@ namespace LevelManager
 }
 
 
-//// get all the window instances in the project
-//List<FamilyInstance> allWindows = Utils.GetAllWindows(curDoc);
-
-//// create a dictionary to hold the window data
-//Dictionary<ElementId, clsWindowData> dictionaryWinData = new Dictionary<ElementId, clsWindowData>();
-
-//// loop through the windows and get the data to store
-//foreach (FamilyInstance curWindow in allWindows)
-//{
-//    // store the data
-//    clsWindowData curData = new clsWindowData(curWindow);
-//    dictionaryWinData.Add(curWindow.Id, curData);
-//}
-
-//// check if adjust head heights is checked
-//bool adjustHeadHeights = curForm.IsAdjustWindowHeadHeightsChecked();
-
-//// check is adjust window heights is checked
-//bool adjustWindowHeights = curForm.IsAdjustWindowHeightsChecked();
-
-//// test for raising or lowering windows
-//bool raiseWindows = (selectedSpecLevel == "Complete Home Plus");
-
-//// create counter for windows changed
-//int countWindows = 0;
-
-//// create a list for windows skipped
-//List<string> skippedWindows = new List<string>();
-
-//#region Adjust Head Heights
-
-//// execute this code if adjust head heights is checked
-//if (adjustHeadHeights)
-//{
-//    // create and start a transaction
-//    using (Transaction t = new Transaction(curDoc, "Adjust Window Head Heights"))
-//    {
-//        t.Start();
-
-//        foreach (var kvp in dictionaryWinData)
-//        {
-//            clsWindowData curData = kvp.Value;
-//            double plateAdjustment = 1.0;
-//            double newHeadHeight;
-
-//            if (!raiseWindows)
-//            {
-//                // lower window head heights by 12"
-//                newHeadHeight = curData.CurHeadHeight - plateAdjustment;
-//            }
-//            else
-//            {
-//                // raise window head height by by 12"
-//                newHeadHeight = curData.CurHeadHeight + plateAdjustment;
-//            }
-
-//            if (curData.HeadHeightParam != null && !curData.HeadHeightParam.IsReadOnly)
-//            {
-//                // adjust the head heihgt
-//                curData.HeadHeightParam.Set(newHeadHeight);
-
-//                // increment the counter
-//                countWindows++;
-//            }
-//        }
-
-//        t.Commit();
-//    }
-//}
-
-
-
-
-//// execute this code if both boxes are checked
-//if (adjustHeadHeights && adjustWindowHeights)
-//{
-//    // create and start a transaction
-//    using (Transaction t = new Transaction(curDoc, "Adjust Window Head Heights & Window Heights"))
-//    {
-//        t.Start();
-
-//        foreach (var kvp in dictionaryWinData)
-//        {
-//            clsWindowData curData = kvp.Value;
-//            double plateAdjustment = 1.0;
-//            double newHeadHeight;
-
-//            if (!raiseWindows)
-//            {
-//                // lower window head heights by 12"
-//                newHeadHeight = curData.CurHeadHeight - plateAdjustment;
-//            }
-//            else
-//            {
-//                // raise window head height by by 12"
-//                newHeadHeight = curData.CurHeadHeight + plateAdjustment;
-//            }
-
-//            if (curData.HeadHeightParam != null && !curData.HeadHeightParam.IsReadOnly)
-//            {
-//                // adjust the head heihgt
-//                curData.HeadHeightParam.Set(newHeadHeight);
-
-//                // increment the counter
-//                countWindows++;
-
-//                // adjust window heights
-//                AdjustWindowHeights(curDoc, curData, plateAdjustment, raiseWindows, skippedWindows);
-//            }
-//        }
-
-//        t.Commit();
-//    }
-//}
