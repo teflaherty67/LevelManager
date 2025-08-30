@@ -111,19 +111,43 @@ namespace LevelManager
                 List<FamilyInstance> firstFlrWindows = Utils.GetWindowsByLevel(curDoc, "First Floor");
                 List<FamilyInstance> secondFlrWindows = Utils.GetWindowsByLevel(curDoc, "Second Floor");
 
+                // create a list to hold skipped windows
+                List<string> skippedWindows = new List<string>();
+
                 // count variables
                 int firstFlrWinHeadAdjusted = 0;
-                int firstFlrWinHeightdjusted = 0;
+                int firstFlrWinHeightAdjusted = 0;
                 int secondFlrWinHeadAdjusted = 0;
-                int secondFlrWinHeightdjusted = 0;
+                int secondFlrWinHeightAdjusted = 0;
 
                 // process first floor windows
                 if (firstFlrHeadHeights)
                 {
-                    using (Transaction t = new Transaction(curDoc, "Adjust First Floor Winodws"))
+                    // create a varioable to hold the Plate 1 adjustment value
+                    double plate1Adjustment = 0;
+
+                    // loop through level adjustments to find Plate 1 value
+                    foreach (var kvp in levelAdjustments)
                     {
+                        Level level = kvp.Key;
+                        double adjustment = kvp.Value;
+
+                        // check if level is Plate 1
+                        if (level.Name == "Plate 1")
+                        {
+                            // store the adjustment value
+                            plate1Adjustment = adjustment;
+                            break;
+                        }
+                    }
+
+                    // create a transaction
+                    using (Transaction t = new Transaction(curDoc, "Adjust First Floor Windows"))
+                    {
+                        // start the transaction
                         t.Start();
 
+                        // loop through the windows
                         foreach (FamilyInstance curWin in firstFlrWindows)
                         {
                             if (curWin != null)
@@ -132,11 +156,33 @@ namespace LevelManager
                                 clsWindowData curWinData = new clsWindowData(curWin);
 
                                 // head height adjustment code
+                                double newHeadHeight;
+
+                                if (adjustFirstFlrHeadHeights)
+                                {
+                                    newHeadHeight = curWinData.CurHeadHeight + plate1Adjustment;
+                                }
+                                else
+                                {
+                                    newHeadHeight = curWinData.CurHeadHeight - plate1Adjustment;
+                                }
+
+                                // set the new head height
+                                if (curWinData.HeadHeightParam != null && !curWinData.HeadHeightParam.IsReadOnly)
+                                {
+                                    curWinData.HeadHeightParam.Set(newHeadHeight);
+
+                                    // increment counter for tracking
+                                    firstFlrWinHeadAdjusted++;
+                                }
 
                                 // check if adjust window heights is true
                                 if (firstFlrWinHeights)
                                 {
-                                    // adjust window heihgts
+                                    AdjustWindowHeights(curDoc, curWinData, plate1Adjustment, adjustFirstFlrHeadHeights, skippedWindows);
+
+                                    // increment counter for tracking
+                                    firstFlrWinHeightAdjusted++;
                                 }
                             }
                         }
@@ -189,6 +235,70 @@ namespace LevelManager
             #endregion
 
             return Result.Succeeded;
+        }
+
+        private void AdjustWindowHeights(Document curDoc, clsWindowData curWinData, double plateAdjustment, bool adjustHeadHeights, List<string> skippedWindows)
+        {
+            // get the current family
+            Family curFam = curWinData.WindowInstance.Symbol.Family;
+
+            // get the current window instance type name
+            string curTypeName = curWinData.WindowInstance.Symbol.Name;
+
+            // split the Type Name into parts
+            string[] stringParts = curTypeName.Split(' ');
+            string sizePart = stringParts[0];
+
+            // store the width & mull indicator if present
+            string wndwPrefix = sizePart.Substring(0, sizePart.Length - 2);
+
+            // get the current window height
+            string wndwHeight = sizePart.Substring(sizePart.Length - 2);
+
+            // change the string to an interger
+            int curHeight = int.Parse(wndwHeight);
+
+            // create variable for new height
+            string newHeightPart;
+
+            if (adjustHeadHeights)
+            {
+                // set the new height number
+                int newHeight = curHeight + 10;
+
+                // convert to a string
+                newHeightPart = newHeight.ToString();
+            }
+            else
+            {
+                // set the new height number
+                int newHeight = curHeight - 10;
+
+                // convert to a string
+                newHeightPart = newHeight.ToString();
+            }
+
+            // set the new type name
+            string newTypeName = wndwPrefix + newHeightPart + " " + string.Join(" ", stringParts.Skip(1));
+
+            // get all the tpyes from the family
+            foreach (ElementId curTypeId in curFam.GetFamilySymbolIds())
+            {
+                // find the correct type
+                FamilySymbol curFamType = curDoc.GetElement(curTypeId) as FamilySymbol;
+                string typeName = curFamType.Name;
+
+                // compare type names
+                if (typeName == newTypeName)
+                {
+                    // if match found, change the type
+                    curWinData.WindowInstance.ChangeTypeId(curFamType.Id);
+                }
+                else
+                {
+                    // if not found, add to list of skipped windows
+                }
+            }
         }
 
         private bool DetermineHeadHeightAdjustment(string plateName, Dictionary<Level, double> levelAdjustments)
