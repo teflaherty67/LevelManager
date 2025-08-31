@@ -36,7 +36,7 @@ namespace LevelManager
             }
 
             // create a counter for summary report
-            int countAdjusted = 0;
+            int countLevels = 0;
 
             #endregion
 
@@ -82,7 +82,7 @@ namespace LevelManager
                         level.Elevation = level.Elevation + adjustment;
 
                         // increment the counter
-                        countAdjusted++;
+                        countLevels++;
                     }
                 }
 
@@ -91,7 +91,8 @@ namespace LevelManager
 
             #endregion
 
-            #region Window Adjustments
+            #region Window Head Height Adjustments
+            // process window head height adjustments based on user input
 
             // get user input from form
             bool firstFlrHeadHeights = curForm.IsFirstFloorHeadHeightsChecked();
@@ -182,6 +183,10 @@ namespace LevelManager
                                     bool success = AdjustWindowHeights(curDoc, curWinData, plate1Adjustment, adjustFirstFlrHeadHeights, skippedWindows);
                                     if (success)
                                     {
+                                        // ensure head height is set correctly after type change
+                                        curWinData.HeadHeightParam.Set(newHeadHeight);
+
+                                        // increment counter for tracking
                                         firstFlrWinHeightAdjusted++;
                                     }
                                 }
@@ -192,7 +197,7 @@ namespace LevelManager
                         t.Commit();
                     }
 
-                    // notify user of adjustments made
+                   
                 }
 
                 // process second floor windows
@@ -229,9 +234,20 @@ namespace LevelManager
 
             #endregion
 
+            #region Window Height Adjustments
+            // process window height adjustments based on user input
+
+
+
+            #endregion
+
             #region Summary Report
 
             // display a summary report of the adjustments made
+
+            // notify user of adjustments made
+            Utils.TaskDialogInformation("Information", "Level Manager", $"{countLevels} Level{(countLevels == 1 ? "" : "s")}" +
+            $" {(countLevels == 1 ? "was" : "were")} adjusted per the specified level adjustment{(countLevels == 1 ? "" : "s")}.");
 
             #endregion
 
