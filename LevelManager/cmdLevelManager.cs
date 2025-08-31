@@ -179,10 +179,11 @@ namespace LevelManager
                                 // check if adjust window heights is true
                                 if (firstFlrWinHeights)
                                 {
-                                    AdjustWindowHeights(curDoc, curWinData, plate1Adjustment, adjustFirstFlrHeadHeights, skippedWindows);
-
-                                    // increment counter for tracking
-                                    firstFlrWinHeightAdjusted++;
+                                    bool success = AdjustWindowHeights(curDoc, curWinData, plate1Adjustment, adjustFirstFlrHeadHeights, skippedWindows);
+                                    if (success)
+                                    {
+                                        firstFlrWinHeightAdjusted++;
+                                    }
                                 }
                             }
                         }
@@ -197,11 +198,11 @@ namespace LevelManager
                 // process second floor windows
                 if (secondFlrHeadHeights)
                 {
-                    using (Transaction t = new Transaction(curDoc, "Adjust Second Floor Winodws"))
+                    using (Transaction t = new Transaction(curDoc, "Adjust Second Floor Windows"))
                     {
                         t.Start();
 
-                        foreach (FamilyInstance curWin in firstFlrWindows)
+                        foreach (FamilyInstance curWin in secondFlrWindows)
                         {
                             if (curWin != null)
                             {
@@ -213,7 +214,7 @@ namespace LevelManager
                                 // check if adjust window heights is true
                                 if (secondFlrWinHeights)
                                 {
-                                    // adjust window heihgts
+                                    // adjust window heights
                                 }
                             }
                         }
@@ -237,7 +238,7 @@ namespace LevelManager
             return Result.Succeeded;
         }
 
-        private void AdjustWindowHeights(Document curDoc, clsWindowData curWinData, double plateAdjustment, bool adjustHeadHeights, List<string> skippedWindows)
+        private bool AdjustWindowHeights(Document curDoc, clsWindowData curWinData, double plateAdjustment, bool adjustHeadHeights, List<string> skippedWindows)
         {
             // get the current family
             Family curFam = curWinData.WindowInstance.Symbol.Family;
@@ -281,24 +282,21 @@ namespace LevelManager
             // set the new type name
             string newTypeName = wndwPrefix + newHeightPart + " " + string.Join(" ", stringParts.Skip(1));
 
-            // get all the tpyes from the family
             foreach (ElementId curTypeId in curFam.GetFamilySymbolIds())
             {
-                // find the correct type
                 FamilySymbol curFamType = curDoc.GetElement(curTypeId) as FamilySymbol;
                 string typeName = curFamType.Name;
 
-                // compare type names
                 if (typeName == newTypeName)
                 {
-                    // if match found, change the type
                     curWinData.WindowInstance.ChangeTypeId(curFamType.Id);
-                }
-                else
-                {
-                    // if not found, add to list of skipped windows
+                    return true; // Success
                 }
             }
+
+            // If we get here, no matching type was found
+            skippedWindows.Add($"Window {curWinData.WindowInstance.Id}: Type '{newTypeName}' not found");
+            return false; // Failed
         }
 
         private bool DetermineHeadHeightAdjustment(string plateName, Dictionary<Level, double> levelAdjustments)
