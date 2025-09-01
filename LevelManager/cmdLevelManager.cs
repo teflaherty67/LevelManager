@@ -1,5 +1,6 @@
 ﻿using LevelManager.Classes;
 using LevelManager.Common;
+using System.Text;
 
 namespace LevelManager
 {
@@ -285,20 +286,69 @@ namespace LevelManager
                     }
                 }
 
-                // tracking & summary report
+                #endregion
+
+                #region Summary Report
+                // determine the summary message based on user selections
+
+                // create a variable to hold the summary message
+                StringBuilder summaryMessage = new StringBuilder();
+
+                // add level adjustment summary
+                if (countLevels > 0)
+                {
+                    summaryMessage.AppendLine($"{countLevels} Level{(countLevels == 1 ? "" : "s")}" +
+                $" {(countLevels == 1 ? "was" : "were")} adjusted per the specified level adjustment{(countLevels == 1 ? "" : "s")}.");
+                    summaryMessage.AppendLine(); // Add blank line for separation
+                }
+
+                // add first floor window head height adjustment summary
+                if (firstFlrWinHeadAdjusted > 0)
+                {
+                    summaryMessage.AppendLine($"First Floor Windows - Head Heights: {firstFlrWinHeadAdjusted} window{(firstFlrWinHeadAdjusted == 1 ? "" : "s")} adjusted");
+                    summaryMessage.AppendLine(); // Add blank line for separation
+                }
+
+                // add first floor window height adjustment summary
+                if (firstFlrWinHeightAdjusted > 0)
+                {
+                    summaryMessage.AppendLine($"First Floor Windows - Window Heights: {firstFlrWinHeightAdjusted} window{(firstFlrWinHeightAdjusted == 1 ? "" : "s")} adjusted");
+                    summaryMessage.AppendLine(); // Add blank line for separation
+                }
+
+                // add second floor window head height adjustment summary
+                if (secondFlrWinHeadAdjusted > 0)
+                {
+                    summaryMessage.AppendLine($"Second Floor Windows - Head Heights: {secondFlrWinHeadAdjusted} window{(secondFlrWinHeadAdjusted == 1 ? "" : "s")} adjusted");
+                    summaryMessage.AppendLine(); // Add blank line for separation
+                }
+
+                // add second floor window height adjustment summary
+                if (secondFlrWinHeightAdjusted > 0)
+                {
+                    summaryMessage.AppendLine($"Second Floor Windows - Heights: {secondFlrWinHeightAdjusted} window{(secondFlrWinHeightAdjusted == 1 ? "" : "s")} adjusted");
+                }
+
+                // add skipped windows summary (if any)
+                if (skippedWindows.Count > 0)
+                {
+                    summaryMessage.AppendLine("\nThe following windows were skipped while adjusting the window heights, the required type doesn't exist:");
+
+                    foreach (string windowInfo in skippedWindows)
+                    {
+                        summaryMessage.AppendLine($"  • {windowInfo}");
+                    }
+                }
+
+                // display single comprehensive summary
+                string finalMessage = summaryMessage.Length > 0 ?
+                    summaryMessage.ToString().Trim() :
+                    "No adjustments were made.";
+
+                Utils.TaskDialogInformation("Summary", "Level Manager", finalMessage);
+
+                #endregion                
             }
-
-            #endregion
-
-            #region Summary Report
-
-            // display a summary report of the adjustments made
-
-            // notify user of adjustments made
-            Utils.TaskDialogInformation("Information", "Level Manager", $"{countLevels} Level{(countLevels == 1 ? "" : "s")}" +
-            $" {(countLevels == 1 ? "was" : "were")} adjusted per the specified level adjustment{(countLevels == 1 ? "" : "s")}.");
-
-            #endregion
 
             return Result.Succeeded;
         }
@@ -360,7 +410,13 @@ namespace LevelManager
             }
 
             // If we get here, no matching type was found
-            skippedWindows.Add($"Window {curWinData.WindowInstance.Id}: Type '{newTypeName}' not found");
+
+            // create variables to hold skipped window info
+            string curFamName = curWinData.WindowInstance.Symbol.Family.Name;
+            string curFamTypeName = curWinData.WindowInstance.Symbol.Name;
+
+
+            skippedWindows.Add($"{curFamName} - {curFamTypeName}");
             return false; // Failed
         }
 
