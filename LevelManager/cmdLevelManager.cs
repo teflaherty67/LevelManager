@@ -104,9 +104,19 @@ namespace LevelManager
             // process windows if any boolean is true
             if (firstFlrHeadHeights || secondFlrHeadHeights)
             {
-                // determine head height adjustement based on level adjustments made
-                bool adjustFirstFlrHeadHeights = DetermineHeadHeightAdjustment("Plate 1", levelAdjustments);
-                bool adjustSecondFlrHeadHeights = DetermineHeadHeightAdjustment("Plate 2", levelAdjustments);
+                // determine head height adjustment based on level adjustments made
+                bool adjustFirstFlrHeadHeights = false;
+                bool adjustSecondFlrHeadHeights = false;
+
+                if (firstFlrHeadHeights)
+                {
+                    adjustFirstFlrHeadHeights = DetermineHeadHeightAdjustment("Plate 1", levelAdjustments);
+                }
+
+                if (secondFlrHeadHeights)
+                {
+                    adjustSecondFlrHeadHeights = DetermineHeadHeightAdjustment("Plate 2", levelAdjustments);
+                }
 
                 // get windows by floor
                 List<FamilyInstance> firstFlrWindows = Utils.GetWindowsByLevel(curDoc, "First Floor");
@@ -195,18 +205,37 @@ namespace LevelManager
 
                         // commit the transaction
                         t.Commit();
-                    }
-
-                   
+                    }                   
                 }
 
                 // process second floor windows
                 if (secondFlrHeadHeights)
                 {
+                    // create a varioable to hold the Plate 2 adjustment value
+                    double plate2Adjustment = 0;
+
+                    // loop through level adjustments to find Plate 2 value
+                    foreach (var kvp in levelAdjustments)
+                    {
+                        Level level = kvp.Key;
+                        double adjustment = kvp.Value;
+
+                        // check if level is Plate 2
+                        if (level.Name == "Plate 2")
+                        {
+                            // store the adjustment value
+                            plate2Adjustment = adjustment;
+                            break;
+                        }
+                    }
+
+                    // create a transaction
                     using (Transaction t = new Transaction(curDoc, "Adjust Second Floor Windows"))
                     {
+                        // start the transaction
                         t.Start();
 
+                        // loop through the Second Floor windows
                         foreach (FamilyInstance curWin in secondFlrWindows)
                         {
                             if (curWin != null)
@@ -215,11 +244,38 @@ namespace LevelManager
                                 clsWindowData curWinData = new clsWindowData(curWin);
 
                                 // head height adjustment code
+                                double newHeadHeight;
+
+                                if (adjustSecondFlrHeadHeights)
+                                {
+                                    newHeadHeight = curWinData.CurHeadHeight + plate2Adjustment;
+                                }
+                                else
+                                {
+                                    newHeadHeight = curWinData.CurHeadHeight - plate2Adjustment;
+                                }
+
+                                // set the new head height
+                                if (curWinData.HeadHeightParam != null && !curWinData.HeadHeightParam.IsReadOnly)
+                                {
+                                    curWinData.HeadHeightParam.Set(newHeadHeight);
+
+                                    // increment counter for tracking
+                                    secondFlrWinHeadAdjusted++;
+                                }
 
                                 // check if adjust window heights is true
                                 if (secondFlrWinHeights)
                                 {
-                                    // adjust window heights
+                                    bool success = AdjustWindowHeights(curDoc, curWinData, plate2Adjustment, adjustSecondFlrHeadHeights, skippedWindows);
+                                    if (success)
+                                    {
+                                        // ensure head height is set correctly after type change
+                                        curWinData.HeadHeightParam.Set(newHeadHeight);
+
+                                        // increment counter for tracking
+                                        secondFlrWinHeightAdjusted++;
+                                    }
                                 }
                             }
                         }
@@ -231,13 +287,6 @@ namespace LevelManager
 
                 // tracking & summary report
             }
-
-            #endregion
-
-            #region Window Height Adjustments
-            // process window height adjustments based on user input
-
-
 
             #endregion
 
