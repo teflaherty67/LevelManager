@@ -302,37 +302,39 @@ namespace LevelManager
                     summaryMessage.AppendLine(); // Add blank line for separation
                 }
 
-                // add first floor window head height adjustment summary
-                if (firstFlrWinHeadAdjusted > 0)
+                // add first floor window adjustment summary
+                if (firstFlrWinHeadAdjusted > 0 || firstFlrWinHeightAdjusted > 0)
                 {
-                    summaryMessage.AppendLine($"First Floor Windows - Head Heights: {firstFlrWinHeadAdjusted} window{(firstFlrWinHeadAdjusted == 1 ? "" : "s")} adjusted");
+                    List<string> firstFloorAdjustments = new List<string>();
+
+                    if (firstFlrWinHeadAdjusted > 0)
+                        firstFloorAdjustments.Add($"head heights adjusted for {firstFlrWinHeadAdjusted} window{(firstFlrWinHeadAdjusted == 1 ? "" : "s")}");
+
+                    if (firstFlrWinHeightAdjusted > 0)
+                        firstFloorAdjustments.Add($"heights adjusted for {firstFlrWinHeightAdjusted} window{(firstFlrWinHeightAdjusted == 1 ? "" : "s")}");
+
+                    summaryMessage.AppendLine($"First Floor Windows: {string.Join(" and ", firstFloorAdjustments)}.");
                     summaryMessage.AppendLine(); // Add blank line for separation
                 }
 
-                // add first floor window height adjustment summary
-                if (firstFlrWinHeightAdjusted > 0)
+                // add second floor window adjustment summary
+                if (secondFlrWinHeadAdjusted > 0 || secondFlrWinHeightAdjusted > 0)
                 {
-                    summaryMessage.AppendLine($"First Floor Windows - Window Heights: {firstFlrWinHeightAdjusted} window{(firstFlrWinHeightAdjusted == 1 ? "" : "s")} adjusted");
-                    summaryMessage.AppendLine(); // Add blank line for separation
-                }
+                    List<string> secondFloorAdjustments = new List<string>();
 
-                // add second floor window head height adjustment summary
-                if (secondFlrWinHeadAdjusted > 0)
-                {
-                    summaryMessage.AppendLine($"Second Floor Windows - Head Heights: {secondFlrWinHeadAdjusted} window{(secondFlrWinHeadAdjusted == 1 ? "" : "s")} adjusted");
-                    summaryMessage.AppendLine(); // Add blank line for separation
-                }
+                    if (secondFlrWinHeadAdjusted > 0)
+                        secondFloorAdjustments.Add($"head heights adjusted for {secondFlrWinHeadAdjusted} window{(secondFlrWinHeadAdjusted == 1 ? "" : "s")}");
 
-                // add second floor window height adjustment summary
-                if (secondFlrWinHeightAdjusted > 0)
-                {
-                    summaryMessage.AppendLine($"Second Floor Windows - Heights: {secondFlrWinHeightAdjusted} window{(secondFlrWinHeightAdjusted == 1 ? "" : "s")} adjusted");
+                    if (secondFlrWinHeightAdjusted > 0)
+                        secondFloorAdjustments.Add($"heights adjusted for {secondFlrWinHeightAdjusted} window{(secondFlrWinHeightAdjusted == 1 ? "" : "s")}");
+
+                    summaryMessage.AppendLine($"Second Floor Windows: {string.Join(" and ", secondFloorAdjustments)}.");
                 }
 
                 // add skipped windows summary (if any)
                 if (skippedWindows.Count > 0)
                 {
-                    summaryMessage.AppendLine("\nThe following windows were skipped while adjusting the window heights, the required type doesn't exist:");
+                    summaryMessage.AppendLine("\nThe following windows were skipped while adjusting the window heights; the required type doesn't exist:");
 
                     foreach (string windowInfo in skippedWindows)
                     {
